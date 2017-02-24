@@ -6,7 +6,7 @@ services:
     restart: always
     environment:
       - CLIENT_APP_HOSTNAME=devops.lxnode.net
-      - NGINX_PROXY_DESTINATION=http://172.17.42.1:8001
+      - NGINX_PROXY_DESTINATION=http://127.0.0.1:8001
     volumes:
       - ./log:/var/log
       - ./nginx/conf.d:/etc/nginx/conf.d
@@ -14,7 +14,7 @@ services:
       - ./data/wordpress:/var/www/html:ro
 
     depends_on:
-      - mysql
+#      - mysql
       - php
     ports:
       - 80:80
@@ -28,26 +28,27 @@ services:
     volumes:
       - ./data//wordpress:/var/www/html
       - ./php/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
-    depends_on:
-      - mysql
+#    depends_on:
+#      - mysql
     environment:
-      - WORDPRESS_DB_NAME=wpdb
+      - WORDPRESS_DEBUG=true
+      - WORDPRESS_DB_NAME=wordpress
       - WORDPRESS_TABLE_PREFIX=wp_
-      - WORDPRESS_DB_HOST=mysql
-      - WORDPRESS_DB_PASSWORD=password
+      - WORDPRESS_DB_HOST=34.196.80.124
+      - WORDPRESS_DB_PASSWORD=root
     networks:
       - front
       - back
-  mysql:
-    image: mariadb:10
-    container_name: mysql
-    restart: always
-    volumes:
-      - ./data/mysql:/var/lib/mysql
-    environment:
-      - MYSQL_ROOT_PASSWORD=password
-    networks:
-      - back
+#  mysql:
+#    image: mariadb:10
+#    container_name: mysql
+#    restart: always
+#    volumes:
+#      - ./data/mysql:/var/lib/mysql
+#    environment:
+#      - MYSQL_ROOT_PASSWORD=password
+#    networks:
+#      - back
 networks:
   front:
   back:
