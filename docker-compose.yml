@@ -5,13 +5,14 @@ services:
     container_name: nginx
     restart: always
     environment:
-      - CLIENT_APP_HOSTNAME=localtest.me
+      - CLIENT_APP_HOSTNAME=devops.lxnode.net
       - NGINX_PROXY_DESTINATION=http://172.17.42.1:8001
     volumes:
       - ./log:/var/log
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/conf/nginx.conf:/etc/nginx/nginx.conf
       - ./data/wordpress:/var/www/html:ro
-      - ./nginx/conf/nginx.conf:/etc/nginx/conf/nginx.conf:ro
-      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+
     depends_on:
       - mysql
       - php
