@@ -1,0 +1,52 @@
+version: '2'
+services:
+  nginx:
+    image: matter/shibboleth-nginx
+    container_name: nginx
+    restart: always
+    environment:
+      - CLIENT_APP_HOSTNAME=localtest.me
+      - NGINX_PROXY_DESTINATION=http://172.17.42.1:8001
+    volumes:
+      - ./log:/var/log
+      - ./data/wordpress:/var/www/html:ro
+      - ./nginx/conf/nginx.conf:/etc/nginx/conf/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+    depends_on:
+      - mysql
+      - php
+    ports:
+      - 80:80
+      - 443:443
+    networks:
+      - front
+  php:
+    image: evild/alpine-wordpress:latest
+    container_name: php
+    restart: always
+    volumes:
+      - ./data//wordpress:/var/www/html
+      - ./php/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+    depends_on:
+      - mysql
+    environment:
+      - WORDPRESS_DB_NAME=wpdb
+      - WORDPRESS_TABLE_PREFIX=wp_
+      - WORDPRESS_DB_HOST=mysql
+      - WORDPRESS_DB_PASSWORD=password
+    networks:
+      - front
+      - back
+  mysql:
+    image: mariadb:10
+    container_name: mysql
+    restart: always
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+    networks:
+      - back
+networks:
+  front:
+  back:
